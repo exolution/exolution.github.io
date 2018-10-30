@@ -1,0 +1,418 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <base href="https://sandbox.runjs.cn/uploads/rs/358/ctm2xrcr/">
+    <title>末日黎明</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+    <script src="game.build.js?_v=2"></script>
+</head>
+<style>
+    canvas {
+        background-image: url(./background.png);
+        background-size: 100% auto;
+        background-position: bottom center;
+    }
+
+    body {
+        padding: 0;
+        margin: 0;
+        overflow: hidden;
+
+    }
+
+    html {
+        height: 100%;
+    }
+
+    body {
+        height: 100%;
+        padding: 0;
+        margin: 0;
+        border: 0;
+
+    }
+
+    #lcd {
+        position: absolute;
+        top: 10px;
+        left: 10px;
+        color: #fff;
+        font-size: 30px;
+        z-index: 1111;
+    }
+
+    #cvs {
+        position: absolute;
+        top: 0;
+        left: 0;
+    }
+
+    .progress-ctn {
+        position: fixed;
+        top: 0;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        display:block ;
+        background: #000 url(loading-bgn.png) no-repeat;
+        background-size: 100% auto;
+        background-position: top center;
+        z-index: 1111111;
+    }
+
+    .progress {
+        margin: 90% auto 0 auto;
+        width: 80%;
+    }
+
+    .barControl {
+        margin: 0 auto;
+    }
+
+    .barContro_space {
+        margin: 10px 0;
+        background: grey;
+        border-radius: 5px;
+    }
+
+    .vader {
+        border-radius: 2px;
+        display: block;
+        width: 0%;
+        box-shadow: 0px 0px 10px 1px #FD4275, 0 0 1px #FD4275, 0 0 1px #FD4275, 0 0 1px #FD4275, 0 0 1px #FD4275, 0 0 1px #FD4275, 0 0 1px #FD4275;
+        background-color: #fff;
+
+        -webkit-transition: 0.4s;
+        transition: 0.4s;
+
+    }
+
+    .loading-text {
+        text-align: center;
+        font-size: 24px;
+        color: #fff;
+        font-style: italic;
+        font-family: sans-serif;
+    }
+
+    .result {
+        position: fixed;
+        top: 0;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        background: rgba(0, 0, 0, 0.6);
+        z-index: 1111;
+        display: none;
+    }
+    .result .enjoy-tips{
+        position: absolute;
+        top: 20px;
+        right: 20px;
+        width: 220px;
+        display:none;
+    }
+    .result h1 {
+        color: red;
+        text-align: center;
+        margin-top: 40%;
+        font-size: 42px;
+    }
+
+    .result p {
+        text-align: center;
+        font-size: 32px;
+        font-style: italic;
+        color: #f5ce7d;
+    }
+    .result .button-ctn{
+        text-align: center;
+    }
+    .result .button-ctn a{
+        display: inline-block;
+        padding: 5px 20px;
+        color: #fff;
+        text-decoration: none;
+        border: 1px solid #fff;
+        border-radius: 7px;
+        font-size: 20px;
+    }
+    .result .button-ctn .download{
+        margin-right:20px;
+    }
+    .result p b{
+        font-size: 38px;
+        font-weight: normal;
+        font-style: italic;
+    }
+    .bullets {
+        position: fixed;
+        right: 10px;
+        bottom: 10px;
+        width: 30px;
+        background: url(bullet.png) repeat-y;
+        height: 0px;
+        z-index: 99;
+    }
+
+    .mask {
+        position: fixed;
+        top: 0;
+        right: 0;
+        left: 0;
+        bottom: 0;
+        background: rgba(0, 0, 0, 0.7);
+        text-align: center;
+        display: none;
+        vertical-align: middle;
+        font-size: 32px;
+        z-index: 99999;
+        color: #fff;
+        line-height: 100%;
+        padding-top: 25%;
+
+    }
+    @-webkit-keyframes shake{
+        15%{
+            -webkit-transform: translate(0px,-1.5px);
+        }
+        25%{
+            -webkit-transform: translate(0,0);
+        }
+        40%{
+            -webkit-transform: translate(0px,1.5px);
+        }
+        55%{
+            -webkit-transform: translate(0,0);
+        }
+        60%{
+            -webkit-transform: translate(0px,-1px);
+        }
+        75%{
+            -webkit-transform: translate(0,0);
+        }
+        90%{
+            -webkit-transform: translate(0px,1px);
+        }
+    }
+    @keyframes shake {
+        15%{
+            transform: translate(0px,-1.5px);
+        }
+        25%{
+            transform: translate(0,0);
+        }
+        40%{
+            transform: translate(0px,1.5px);
+        }
+        55%{
+            transform: translate(0,0);
+        }
+        60%{
+            transform: translate(0px,-1px);
+        }
+        75%{
+            transform: translate(0,0);
+        }
+        90%{
+            transform: translate(0px,1px);
+        }
+    }
+    .progress-ctn.loading img{
+        transform: scale(1.8);
+    }
+    .loading-a{
+        width:200px;
+        height:250px;
+        top:120px;
+        left:50%;
+        margin-left:-100px;
+        position: absolute;
+        transform: scale(1);
+        animation: fade 1.8s infinite;
+        transition:20s;
+        -webkit-transition:20s;
+    }
+    .loading-b{
+        width:200px;
+        height:250px;
+        left:50%;
+        margin-left:-100px;
+        top:120px;
+        transform: scale(1);
+        opacity: 0;
+        position: absolute;
+        animation: fade 1.8s infinite;
+        animation-delay: 0.8s;
+        transition:20s;
+        -webkit-transition:20s;
+
+    }
+    @keyframes fade {
+        0%{
+            opacity: 0.2;
+        }
+        50%{
+            opacity: 1;
+        }
+        60%{
+            opacity: 1;
+        }
+        100%{
+            opacity: 0.2;
+        }
+
+    }
+    .loading-text{
+        font-size: 20px;
+        color: #e5e5e5;
+        text-align: center;
+        margin-top: 15px;
+    }
+    .tips{
+        position: fixed;
+        top: 0;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        z-index: 111;
+    }
+    .tips h1{
+        font-size: 80px;
+        text-align: center;
+        margin-top: 40%;
+        margin-bottom: 0;
+        font-family: sans-serif;
+        text-shadow: 0px 0px 15px #781314;
+        -webkit-text-shadow: 0px 0px 15px #781314;
+        color: #fff;
+    }
+    .tips p{
+        font-size: 46px;
+        text-align: center;
+        margin-top: 0px;
+        text-shadow: 0px 0px 15px #781314;
+        -webkit-text-shadow: 0px 0px 15px #781314;
+        color: #fff;
+    }
+    .download-bar{
+        position: absolute;
+        top: 0;
+        left: 0;
+        z-index: 1111;
+        background: rgba(0,0,0,0.8);
+        width: 100%;
+        padding:5px;
+    }
+    .download-bar img{
+        width: 57px;
+        height: 57px;
+        margin-left: 10px;
+        vertical-align: middle;
+    }
+    .download-bar-text{
+        vertical-align: middle;
+        display:inline-block;
+    }
+    .download-bar-text h2{
+        margin: 0;
+        font-size: 18px;
+        color: #fff;
+    }
+    .download-bar-text p{
+        margin: 0;
+        font-size: 16px;
+        color: #fff;
+    }
+    .download-bar .download-btn{
+        display: inline-block;
+        text-decoration: none;
+        float: right;
+        background: url(download-btn-bgn.png);
+        width: 112px;
+        height: 40px;
+        background-size: 112px 40px;
+        margin-right: 15px;
+        margin-top: 10px;
+        color: #fff;
+        line-height: 40px;
+        text-align: center;
+        font-size: 18px;
+    }
+    .game-over{
+        width: 300px;
+        height: 221px;
+        position: absolute;
+        top: 30%;
+        left: 50%;
+        background: url(result-bgn.png);
+        background-size: 100% auto;
+        z-index: 1111;
+        margin-left: -150px;
+    }
+    .game-over span{
+        color: #fff;
+        position: absolute;
+        left: 142px;
+        top: 66px;
+        line-height: 1.5;
+    }
+    .game-over .download-btn{
+        text-decoration: none;
+        display: block;
+        background: url(download.png);
+        width: 190px;
+        height: 53px;
+        background-size: 190px 53px;
+        margin-top: 170px;
+        margin-left: auto;
+        margin-right: auto;
+    }
+</style>
+<body>
+<img src="share2.png"  style="position:absolute;left:-999px"alt="">
+<div class="progress-ctn">
+    <img class="loading-a" src="loading-1.png" alt="">
+    <img src="loading-2.png" class="loading-b" alt="">
+
+    <div class="progress">
+        <span class="barControl" style="width:80%;">
+            <div class="barContro_space"><span class="vader" id="progress" style="height: 6px; width: 0%;"
+                                               id="barvaderTime"></span>
+            </div>
+        </span>
+    </div>
+    <div class="loading-text">一大波僵尸即将到来...</div>
+</div>
+<div class="tips">
+    <h1>3</h1>
+    <p>点击屏幕开火</p>
+</div>
+<div id="lcd"></div>
+<canvas id="cvs"></canvas>
+
+<div class="result">
+    <div class="game-over">
+        <span>现在有更多<b style="color:yellow;">军火供应</b><br>助你杀出丧尸镇!</span>
+        <a href="http://www.hztgame.com/h5/sstj/ry208/" class="download-btn"></a>
+    </div>
+    <!--<h1>Game Over</h1>
+
+    <p><b>25</b> Kills</p>
+    <div class="button-ctn">
+        <a href="javascript:;" class="download">下载游戏</a>
+        <a href="javascript:;" class="enjoy">炫耀一下</a>
+    </div>
+    <img src="enjoy.png"  class="enjoy-tips" alt="">-->
+</div>
+<div class="bullets"></div>
+<div class="download-bar">
+    <img src="logo.png" alt="">
+    <div class="download-bar-text"><h2>末日黎明</h2><p>全球同服联盟对战</p></div>
+    <a href="http://www.hztgame.com/h5/sstj/ry208/" class="download-btn">呼叫增援</a>
+</div>
+<div class="mask">游戏不支持横屏,请在竖屏模式下操作</div>
+<script src="main.js"></script>
+</body>
+</html>
